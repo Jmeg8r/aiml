@@ -1,5 +1,34 @@
 #!/bin/bash
 
+resolve_python() {
+    if command -v python3.11 >/dev/null 2>&1; then
+        command -v python3.11
+        return
+    fi
+    if command -v pyenv >/dev/null 2>&1; then
+        local pyenv_python
+        pyenv_python="$(pyenv which python3.11 2>/dev/null || true)"
+        if [ -n "$pyenv_python" ] && [ -x "$pyenv_python" ]; then
+            echo "$pyenv_python"
+            return
+        fi
+    fi
+    if command -v python3 >/dev/null 2>&1; then
+        local version
+        version="$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')"
+        case "$version" in
+            3.11|3.12|3.13)
+                command -v python3
+                return
+                ;;
+        esac
+    fi
+    echo "ERROR: Python 3.11+ required. Install with: pyenv install 3.11.7" >&2
+    exit 1
+}
+
+PYTHON="$(resolve_python)"
+
 echo "🚀 Building AI Chat Assistant..."
 
 # Build Backend
@@ -8,7 +37,7 @@ cd backend
 
 # Create virtual environment if it doesn't exist
 if [ ! -d "venv" ]; then
-    python3.11 -m venv venv
+    "$PYTHON" -m venv venv
 fi
 
 # Activate virtual environment
