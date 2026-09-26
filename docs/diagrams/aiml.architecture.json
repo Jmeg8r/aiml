@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "aiml \u2014 180-day AI/ML course lessons (days 1\u20135)",
+    "output": "aiml.architecture.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "chat",
+        "label": "Day 1 chat request",
+        "focus": [
+          "browser",
+          "frontend",
+          "api",
+          "models",
+          "svc",
+          "gemini"
+        ],
+        "note": "The React app posts the message and history to /api/v1/chat; ai_service sends the last 5 turns to Gemini."
+      },
+      {
+        "id": "deploy",
+        "label": "Day 1 Docker image",
+        "focus": [
+          "browser",
+          "nginx",
+          "api"
+        ],
+        "note": "The Dockerfile's final nginx stage serves the React build and proxies /api/ to the backend on :8000."
+      },
+      {
+        "id": "lessons",
+        "label": "Days 2\u20135 lessons",
+        "focus": [
+          "lessons",
+          "dashboard",
+          "tests"
+        ],
+        "note": "Each lesson is a lesson_code.py with a pytest file; day 2 adds a Flask dashboard that imports it."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser",
+      "sublabel": "localhost:3000",
+      "pos": [
+        40,
+        220
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "nginx",
+      "type": "frontend",
+      "label": "nginx",
+      "sublabel": "Docker final stage",
+      "pos": [
+        250,
+        80
+      ],
+      "size": [
+        140,
+        60
+      ],
+      "tag": "optional"
+    },
+    {
+      "id": "frontend",
+      "type": "frontend",
+      "label": "React frontend",
+      "sublabel": "axios client",
+      "pos": [
+        250,
+        220
+      ],
+      "size": [
+        140,
+        60
+      ],
+      "tag": "React 18"
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "FastAPI backend",
+      "sublabel": "/api/v1/chat, /health",
+      "pos": [
+        460,
+        220
+      ],
+      "size": [
+        140,
+        60
+      ],
+      "tag": ":8000"
+    },
+    {
+      "id": "models",
+      "type": "backend",
+      "label": "Pydantic models",
+      "sublabel": "ChatRequest / Response",
+      "pos": [
+        460,
+        360
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "svc",
+      "type": "backend",
+      "label": "ai_service.py",
+      "sublabel": "prompt + history",
+      "pos": [
+        670,
+        220
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "settings",
+      "type": "security",
+      "label": "config/settings.py",
+      "sublabel": "GEMINI_API_KEY",
+      "pos": [
+        670,
+        80
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "gemini",
+      "type": "external",
+      "label": "Google Gemini",
+      "sublabel": "gemini-pro",
+      "pos": [
+        880,
+        220
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "lessons",
+      "type": "backend",
+      "label": "Days 2\u20135 lessons",
+      "sublabel": "lesson_code.py",
+      "pos": [
+        250,
+        500
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "dashboard",
+      "type": "frontend",
+      "label": "Day 2 dashboard",
+      "sublabel": "Flask, :5000",
+      "pos": [
+        40,
+        500
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "tests",
+      "type": "backend",
+      "label": "Lesson tests",
+      "sublabel": "test_lesson.py",
+      "pos": [
+        460,
+        500
+      ],
+      "size": [
+        140,
+        60
+      ],
+      "tag": "pytest"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Day 1: ai-chat-assistant",
+      "wraps": [
+        "nginx",
+        "frontend",
+        "api",
+        "models",
+        "svc",
+        "settings"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Days 2\u20135",
+      "wraps": [
+        "lessons",
+        "dashboard",
+        "tests"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "b-fe",
+      "from": "browser",
+      "to": "frontend",
+      "variant": "emphasis"
+    },
+    {
+      "id": "b-nginx",
+      "from": "browser",
+      "to": "nginx",
+      "label": ":80",
+      "variant": "dashed"
+    },
+    {
+      "id": "nginx-api",
+      "from": "nginx",
+      "to": "api",
+      "label": "/api/",
+      "variant": "dashed",
+      "toSide": "top"
+    },
+    {
+      "id": "fe-api",
+      "from": "frontend",
+      "to": "api",
+      "label": "POST /chat",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-models",
+      "from": "api",
+      "to": "models",
+      "label": "validate",
+      "labelDy": 24
+    },
+    {
+      "id": "api-svc",
+      "from": "api",
+      "to": "svc",
+      "variant": "emphasis"
+    },
+    {
+      "id": "settings-svc",
+      "from": "settings",
+      "to": "svc",
+      "label": "API key",
+      "variant": "security",
+      "labelDy": 24
+    },
+    {
+      "id": "svc-gemini",
+      "from": "svc",
+      "to": "gemini",
+      "label": "generate",
+      "variant": "emphasis"
+    },
+    {
+      "id": "dash-lessons",
+      "from": "dashboard",
+      "to": "lessons",
+      "label": "imports"
+    },
+    {
+      "id": "tests-lessons",
+      "from": "tests",
+      "to": "lessons",
+      "label": "tests",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Day 1 frontend",
+      "items": [
+        "React 18 + styled-components",
+        "axios client, 30s timeout",
+        "API URL from REACT_APP_API_URL"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Day 1 backend",
+      "items": [
+        "FastAPI with CORS for localhost:3000",
+        "Empty message returns 400",
+        "Errors come back as success=false"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Gemini call",
+      "items": [
+        "google-generativeai 0.3.2",
+        "Last 5 history messages as context",
+        "Key read from .env via python-dotenv"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Days 2\u20135",
+      "items": [
+        "Variables, control flow, lists/tuples, dicts/sets",
+        "Each lesson has its own setup.sh and venv",
+        "pytest file per lesson"
+      ]
+    }
+  ]
+}
