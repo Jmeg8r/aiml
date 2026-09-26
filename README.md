@@ -4,6 +4,65 @@
 
 Course Link : https://aieworks.substack.com/p/announcing-our-new-180-day-ai-and
 
+## What's in this repo
+
+This repo holds the hands-on lesson code for the course. **Days 1–5 are here so far.** Everything from
+"Course Details" down is the course's own outline for all 180 days; it describes what the course
+plans to cover, not code that exists in this repo yet.
+
+Each `dayN/setup.sh` is the lesson's generator script (it writes the lesson folder). The generated
+lesson lives next to it:
+
+| Day | Folder | What it is |
+| :--- | :--- | :--- |
+| 1 | `day1/ai-chat-assistant/` | Full-stack chat app: FastAPI backend calling Google Gemini, React frontend, Docker files |
+| 2 | `day2/day2_variables_datatypes/` | Variables and data types (`lesson_code.py`), plus a small Flask dashboard on port 5000 |
+| 3 | `day3/day3_control_flow/` | Control flow (`lesson_code.py`) |
+| 4 | `day4/day4_lists_tuples/` | Lists and tuples (`lesson_code.py`) |
+| 5 | `day5/day5_dictionaries_sets/` | Dictionaries and sets (`lesson_code.py`) |
+
+### Running a lesson (days 2–5)
+
+```bash
+cd day3/day3_control_flow        # or any day 2–5 lesson folder
+./setup.sh                       # creates a virtualenv and installs requirements.txt
+source ai_env/bin/activate       # venv name varies: ai_course_env (day 2), ai_env (days 3, 5), venv (day 4)
+python lesson_code.py
+pytest test_lesson.py
+```
+
+### Running the day 1 chat app
+
+```bash
+cd day1/ai-chat-assistant
+cp .env.example .env             # then set GEMINI_API_KEY
+./build.sh                       # backend venv + pip install, frontend npm install, tests, build
+./start.sh                       # backend on :8000 (docs at /docs), frontend on :3000
+```
+
+`day1/ai-chat-assistant/.env.example` is tracked in the repo (it is a dotfile, so some file browsers hide it).
+
+Docker: the Dockerfile's final stage is an nginx image that serves the React build and proxies
+`/api/` to the backend. `docker-compose.yml` builds only the `backend` and `frontend` stages; the
+`frontend` stage builds the static files but has no start command, so compose does not serve the
+UI on :3000 as written.
+
+## Architecture (day 1 chat app)
+
+```mermaid
+flowchart TD
+    User["Browser"] --> FE["React frontend<br/>:3000"]
+    FE -->|"POST /api/v1/chat (axios)"| API["FastAPI backend<br/>:8000"]
+    API --> SVC["ai_service.py<br/>last 5 messages as context"]
+    SVC -->|"google-generativeai"| Gemini["Google Gemini API"]
+    Env[".env<br/>GEMINI_API_KEY"] -.-> SVC
+```
+
+A rendered diagram is in [`docs/diagrams/aiml.architecture.svg`](docs/diagrams/aiml.architecture.svg)
+(source: `docs/diagrams/aiml.architecture.json`).
+
+---
+
 ## **Course Details**
 
 | Detail | Description |
