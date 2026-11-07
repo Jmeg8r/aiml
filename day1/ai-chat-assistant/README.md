@@ -22,6 +22,9 @@ A full-stack AI chat application demonstrating Python fundamentals in AI system 
 ./docker-build.sh
 ```
 
+The compose file builds only the `backend` and `frontend` stages, and the `frontend` stage has no start
+command, so the UI is not served on :3000 this way; only the backend on :8000 comes up usefully.
+
 ## 🌐 Access Points
 
 - **Frontend**: http://localhost:3000
@@ -53,7 +56,9 @@ ai-chat-assistant/
 │   │   ├── services/       # API client
 │   │   └── styles/         # Styled components
 │   └── public/             # Static files
-└── scripts/                # Build/deployment scripts
+├── build.sh, start.sh, stop.sh, demo.sh   # local build/run/demo scripts
+├── Dockerfile, docker-compose.yml, docker-build.sh, nginx.conf
+└── .env.example            # copy to .env and set GEMINI_API_KEY
 ```
 
 ## 🧪 Testing
